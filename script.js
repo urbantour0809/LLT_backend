@@ -1,5 +1,5 @@
 window.onload = function() {
-    const flaskUrl = 'https://port-0-llt-backend-m2eej1jqd8b44d66.sel4.cloudtype.app'; // Flask 서버의 URL
+    const flaskUrl = window.location.origin;
 
     console.log("Initializing script...");
 
