@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS  # CORS를 추가
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import load_model
@@ -8,6 +9,7 @@ import os
 import logging
 
 app = Flask(__name__)
+CORS(app)  # CORS를 Flask 앱에 적용
 
 # 로그 설정
 logging.basicConfig(level=logging.INFO)
