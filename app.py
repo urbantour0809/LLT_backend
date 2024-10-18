@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import os
 import logging
 
-app = Flask(__name__, static_folder="static", template_folder="templates")  # static과 template 폴더 지정
+app = Flask(__name__)
 CORS(app)  # CORS를 Flask 앱에 적용
 
 # 로그 설정
@@ -56,15 +56,10 @@ def predict_lotto_numbers(lotto_numbers):
 
     return predicted_games
 
-# 메인 페이지 라우트
+# 프론트엔드 페이지 라우트
 @app.route('/')
 def home():
-    return render_template('index.html')  # index.html 템플릿 렌더링
-
-# 결과 페이지 라우트
-@app.route('/result')
-def result():
-    return render_template('result.html')  # result.html 템플릿 렌더링
+    return "Backend is running"
 
 # 로또 번호 예측 API
 @app.route('/generate-lotto')
