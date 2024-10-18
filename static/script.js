@@ -40,7 +40,7 @@ window.onload = function() {
         gameDiv.innerHTML = '';
         numbers.forEach(num => {
             const img = document.createElement('img');
-            img.src = `src/image/numbers/${num}.png`;
+            img.src = `image/numbers/${num}.png`;
             img.alt = `${num}번`;
             img.classList.add('lotto-ball');
             gameDiv.appendChild(img);
