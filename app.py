@@ -56,10 +56,15 @@ def predict_lotto_numbers(lotto_numbers):
 
     return predicted_games
 
-# 프론트엔드 페이지 라우트
+# 메인 페이지 라우트
 @app.route('/')
 def home():
     return render_template('index.html')  # index.html 템플릿 렌더링
+
+# 결과 페이지 라우트
+@app.route('/result')
+def result():
+    return render_template('result.html')  # result.html 템플릿 렌더링
 
 # 로또 번호 예측 API
 @app.route('/generate-lotto')
