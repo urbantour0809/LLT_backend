@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLT 로또번호</title>
+    <link rel="icon" type="image/x-icon" href="src/image/fav.ico">
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="src/image/llt.png" alt="로고">
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">HOME</a></li>
+            <li><a href="#">RECORD</a></li>
+            <li><a href="#">CONTACT</a></li>
+        </ul>
+        <div class="icons">
+            <a href="#"><img src="src/image/jobko.jpeg" alt="JOBKO 아이콘"></a>
+            <a href="#"><img src="src/image/linkedin.png" alt="LinkedIn 아이콘"></a>
+            <a href="#"><img src="src/image/git.png" alt="Github 아이콘"></a>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <section class="main-content">
+        <p id="game-info"></p>
+
+        <div id="lotto-results" class="lotto-results">
+            <div class="game-row">
+                <span>게임 1:</span>
+                <div class="game-numbers" id="game1"></div>
+            </div>
+            <div class="game-row">
+                <span>게임 2:</span>
+                <div class="game-numbers" id="game2"></div>
+            </div>
+            <div class="game-row">
+                <span>게임 3:</span>
+                <div class="game-numbers" id="game3"></div>
+            </div>
+            <div class="game-row">
+                <span>게임 4:</span>
+                <div class="game-numbers" id="game4"></div>
+            </div>
+            <div class="game-row">
+                <span>게임 5:</span>
+                <div class="game-numbers" id="game5"></div>
+            </div>
+        </div> 
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

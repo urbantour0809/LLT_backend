@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLT 로또번호 결과</title>
+    <link rel="icon" type="image/x-icon" href="src/image/fav.ico">
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="src/image/llt.png" alt="로고">
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">HOME</a></li>
+            <li><a href="#">RECORD</a></li>
+            <li><a href="#">CONTACT</a></li>
+        </ul>
+        
+        <div class="icons">
+            <a href="#"><img src="src/image/jobko.jpeg" alt="JOBKO 아이콘"></a>
+            <a href="#"><img src="src/image/linkedin.png" alt="LinkedIn 아이콘"></a>
+            <a href="#"><img src="src/image/git.png" alt="Github 아이콘"></a>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <section class="main-content">
+        <h1>로또 번호 생성기</h1>
+        <p>카스트로폴룩스(CASTORPOLLUX) - 행운을 부르는 주문<br>행복해지기를 바라는 누구에게나 혹은 상대방에게 전하는 짧은 주문</p>
+        <button class="lotto-btn" onclick="showLoadingAndRedirect()">이번주 번호 뽑기</button>
+    </section>
+
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <img src="src/image/loading.gif" alt="Loading" class="loading-gif">
+    </div>
+
+    <script>
+        function showLoadingAndRedirect() {
+            document.getElementById('loading').style.display = 'flex';
+            setTimeout(function() {
+                window.location.href = "/result";  <!-- 수정: result 페이지로 리디렉션 -->
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
