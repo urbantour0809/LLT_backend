@@ -1,15 +1,19 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
 import os
+import logging
 
 app = Flask(__name__)
 
+# 로그 설정
+logging.basicConfig(level=logging.INFO)
+
 # 모델 로드
-model = load_model('lotto_model.h5')
+model = load_model(os.path.join(os.path.dirname(__file__), 'lotto_model.h5'))
 
 # 로또 데이터 txt 파일에서 데이터 로드
 def load_lotto_data(file_name):
@@ -49,16 +53,17 @@ def predict_lotto_numbers(lotto_numbers):
         new_input = np.concatenate((x_test[:, 1:, :], predicted_numbers.reshape(1, 1, -1)), axis=1)
         x_test = new_input
 
+    logging.info(f"Predicted games: {predicted_games}")
     return predicted_games
 
 # 로또 번호 예측 API
 @app.route('/generate-lotto')
 def generate_lotto():
-    lotto_numbers = load_lotto_data('lotto_numbers.txt')
+    lotto_numbers = load_lotto_data(os.path.join(os.path.dirname(__file__), 'lotto_numbers.txt'))
     predictions = predict_lotto_numbers(lotto_numbers)
     return jsonify(numbers=predictions)
 
-# AWS에서 자동으로 적절한 포트를 사용
+# AWS 또는 Cloudtype에서 자동으로 적절한 포트를 사용
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Cloudtype에서 동적으로 포트를 할당
     app.run(host='0.0.0.0', port=port)
