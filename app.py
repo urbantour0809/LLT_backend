@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template
-from flask_cors import CORS  # CORS 추가
+from flask_cors import CORS
 import numpy as np
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
@@ -22,6 +22,16 @@ def load_lotto_data(file_name):
         lines = file.readlines()
     lotto_numbers = [list(map(int, line.strip().split(','))) for line in lines]
     return lotto_numbers
+
+# 회차 계산 함수
+def get_lotto_round():
+    start_lotto_round = 1142  # 기준 회차
+    start_date = datetime(2024, 10, 19)  # 기준 회차의 날짜
+    today = datetime.today()
+    delta_days = (today - start_date).days
+    delta_weeks = delta_days // 7  # 주 차이 계산
+    current_round = start_lotto_round + delta_weeks  # 현재 회차 계산
+    return current_round
 
 # 데이터 스케일링 함수
 def scale_data(lotto_numbers):
@@ -56,17 +66,13 @@ def predict_lotto_numbers(lotto_numbers):
 
     return predicted_games
 
-# 프론트엔드 페이지 라우트
-@app.route('/')
-def home():
-    return "Backend is running"
-
 # 로또 번호 예측 API
 @app.route('/generate-lotto')
 def generate_lotto():
     lotto_numbers = load_lotto_data(os.path.join(os.path.dirname(__file__), 'lotto_numbers.txt'))
     predictions = predict_lotto_numbers(lotto_numbers)
-    return jsonify(numbers=predictions)
+    current_round = get_lotto_round()  # 현재 회차 계산
+    return jsonify(numbers=predictions, round=current_round)
 
 # 포트 설정 (Cloudtype에서 자동 할당)
 if __name__ == '__main__':
