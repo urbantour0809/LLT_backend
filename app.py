@@ -25,8 +25,8 @@ def load_lotto_data(file_name):
 
 # 회차 계산 함수
 def get_lotto_round():
-    start_lotto_round = 1142  # 기준 회차
-    start_date = datetime(2024, 10, 19)  # 기준 회차의 날짜
+    start_lotto_round = 1143  # 기준 회차
+    start_date = datetime(2024, 10, 20)  # 기준 회차의 날짜
     today = datetime.today()
     delta_days = (today - start_date).days
     delta_weeks = delta_days // 7  # 주 차이 계산
