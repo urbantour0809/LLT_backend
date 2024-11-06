@@ -1,17 +1,41 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, session
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from datetime import datetime
 import numpy as np
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
-from datetime import datetime, timedelta
 import os
 import logging
+from dotenv import load_dotenv
+from auth import auth  # auth 블루프린트 임포트
+
+# 환경 변수 로드
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # CORS를 Flask 앱에 적용
+app.secret_key = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# 로그 설정
-logging.basicConfig(level=logging.INFO)
+CORS(app)
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+app.register_blueprint(auth)  # 블루프린트 등록
+
+# 사용자 모델 정의
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(50))
+    age = db.Column(db.Integer)
+    gender = db.Column(db.Enum('M', 'F'))
+
+# 초기화 시 데이터베이스 생성
+with app.app_context():
+    db.create_all()
 
 # 모델 로드
 model = load_model(os.path.join(os.path.dirname(__file__), 'lotto_model.h5'))
@@ -25,12 +49,12 @@ def load_lotto_data(file_name):
 
 # 회차 계산 함수
 def get_lotto_round():
-    start_lotto_round = 1143  # 기준 회차
-    start_date = datetime(2024, 10, 20)  # 기준 회차의 날짜
+    start_lotto_round = 1143
+    start_date = datetime(2024, 10, 20)
     today = datetime.today()
     delta_days = (today - start_date).days
-    delta_weeks = delta_days // 7  # 주 차이 계산
-    current_round = start_lotto_round + delta_weeks  # 현재 회차 계산
+    delta_weeks = delta_days // 7
+    current_round = start_lotto_round + delta_weeks
     return current_round
 
 # 데이터 스케일링 함수
@@ -66,15 +90,18 @@ def predict_lotto_numbers(lotto_numbers):
 
     return predicted_games
 
-# 로또 번호 예측 API
+# 로또 번호 예측 API (로그인 필요)
 @app.route('/generate-lotto')
 def generate_lotto():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Please log in to generate lotto numbers'}), 403
+
     lotto_numbers = load_lotto_data(os.path.join(os.path.dirname(__file__), 'lotto_numbers.txt'))
     predictions = predict_lotto_numbers(lotto_numbers)
-    current_round = get_lotto_round()  # 현재 회차 계산
+    current_round = get_lotto_round()
     return jsonify(numbers=predictions, round=current_round)
 
 # 포트 설정 (Cloudtype에서 자동 할당)
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Cloudtype에서 동적으로 포트를 할당
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
