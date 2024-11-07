@@ -1,8 +1,6 @@
 from flask import Blueprint, jsonify, request, session
-from flask_bcrypt import Bcrypt
-from app import db, User  # app의 User 모델과 db 사용
+from app import db, bcrypt, User  # app의 bcrypt 사용
 
-bcrypt = Bcrypt()
 auth = Blueprint('auth', __name__)
 
 @auth.route('/register', methods=['POST'])
@@ -11,8 +9,11 @@ def register():
     if not data['password'] == data['confirm_password']:
         return jsonify({'error': 'Passwords do not match'}), 400
     
+    # 사용자 이름 중복 확인
+    if User.query.filter_by(username=data['username']).first():
+        return jsonify({'error': 'Username already exists'}), 409
+    
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-
     new_user = User(username=data['username'], password=hashed_password,
                     name=data['name'], age=data['age'], gender=data['gender'])
     

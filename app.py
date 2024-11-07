@@ -7,7 +7,6 @@ import numpy as np
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 import os
-import logging
 from dotenv import load_dotenv
 from auth import auth  # auth 블루프린트 임포트
 
@@ -19,7 +18,8 @@ app.secret_key = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-CORS(app)
+# CORS 설정 (프론트엔드 도메인 명시)
+CORS(app, supports_credentials=True, origins=['https://llt-aws.vercel.app'])
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 app.register_blueprint(auth)  # 블루프린트 등록
