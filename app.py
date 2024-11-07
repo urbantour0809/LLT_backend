@@ -18,8 +18,9 @@ app.secret_key = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# CORS 설정 (프론트엔드 도메인 명시)
+# CORS 설정 (프론트엔드 도메인 명시 및 credentials 설정)
 CORS(app, supports_credentials=True, origins=['https://llt-aws.vercel.app'])
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 app.register_blueprint(auth)  # 블루프린트 등록
