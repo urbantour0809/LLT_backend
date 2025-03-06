@@ -53,6 +53,34 @@ def generate_lotto():
     except Exception as e:
         return jsonify({'error': 'Prediction failed', 'message': str(e)}), 500
 
+# Health Check API 추가
+@app.route('/health')
+def health_check():
+    try:
+        # 기본적인 서버 상태 확인
+        status = {
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'service': 'lotto-prediction-api'
+        }
+        
+        # 모델 파일 존재 여부 확인
+        model_path = os.path.join(os.path.dirname(__file__), 'lotto_model.h5')
+        data_path = os.path.join(os.path.dirname(__file__), 'lotto_numbers.txt')
+        
+        status['checks'] = {
+            'model_file': os.path.exists(model_path),
+            'data_file': os.path.exists(data_path)
+        }
+        
+        return jsonify(status), 200
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
 # 에러 핸들링
 @app.errorhandler(Exception)
 def handle_error(error):
