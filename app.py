@@ -1,13 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from datetime import datetime
-from functools import wraps
+from datetime import datetime, timedelta
 import os
-from dotenv import load_dotenv
 from predict import load_lotto_data, predict_lotto_numbers
-
-# 환경 변수 로드
-load_dotenv()
 
 app = Flask(__name__)
 
@@ -15,35 +10,38 @@ app = Flask(__name__)
 CORS(app, 
      origins=['https://llt-aws.vercel.app'],
      methods=['GET'],
-     allow_headers=['X-API-Key', 'Content-Type'],
+     allow_headers=['Content-Type'],
      max_age=3600
 )
 
-# API 키 설정
-API_KEY = os.getenv('API_KEY')
-
-def require_api_key(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        api_key = request.headers.get('X-API-Key')
-        if api_key and api_key == API_KEY:
-            return f(*args, **kwargs)
-        return jsonify({'error': 'Invalid API key'}), 401
-    return decorated_function
-
 # 회차 계산 함수
 def get_lotto_round():
-    start_lotto_round = 1143
-    start_date = datetime(2024, 10, 20)
-    today = datetime.today()
-    delta_days = (today - start_date).days
-    delta_weeks = delta_days // 7
-    current_round = start_lotto_round + delta_weeks
-    return current_round
+    try:
+        # lotto_numbers.txt에서 마지막 회차 읽기
+        with open(os.path.join(os.path.dirname(__file__), 'lotto_numbers.txt'), 'r') as f:
+            lines = f.readlines()
+            if not lines:
+                raise ValueError("로또 데이터 파일이 비어있습니다.")
+            last_round = int(lines[-1].split(',')[0])  # 마지막 줄의 회차 번호
+            
+        # 현재 날짜로부터 이번 주 토요일 계산
+        today = datetime.today()
+        days_until_saturday = (5 - today.weekday()) % 7
+        this_saturday = today + timedelta(days=days_until_saturday)
+        
+        # 이번 주 토요일이 지났다면 다음 주 토요일의 회차
+        if today.weekday() == 5 and today.hour >= 21:  # 토요일 21시 이후
+            return last_round + 1
+        elif days_until_saturday == 0 and today.hour >= 21:  # 토요일 21시 이후
+            return last_round + 1
+        else:
+            return last_round
+            
+    except Exception as e:
+        raise Exception(f"회차 계산 중 오류 발생: {str(e)}")
 
 # 로또 번호 예측 API
 @app.route('/generate-lotto')
-@require_api_key
 def generate_lotto():
     try:
         lotto_numbers = load_lotto_data(os.path.join(os.path.dirname(__file__), 'lotto_numbers.txt'))
