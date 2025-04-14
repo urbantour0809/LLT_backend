@@ -59,27 +59,6 @@ GET /generate-lotto
   "round": 1122
 }
 ```
-
-### ❤️ 헬스 체크
-```
-GET /health
-```
-
-**응답 예시:**
-```json
-{
-  "status": "healthy",
-  "timestamp": "2025-04-14T10:10:00",
-  "service": "lotto-prediction-api",
-  "checks": {
-    "model_file": true,
-    "data_file": true
-  }
-}
-```
-
----
-
 ## 🚀 실행 방법
 
 ```bash
