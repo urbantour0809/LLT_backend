@@ -42,8 +42,6 @@ predicted = np.clip(np.around(predicted).astype(int), 1, 45)
 
 ---
 
-## 🔌 API 사용법
-
 ### 🎯 로또 번호 예측
 ```
 GET /generate-lotto
