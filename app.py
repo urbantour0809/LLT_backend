@@ -17,25 +17,22 @@ CORS(app,
 # 회차 계산 함수
 def get_lotto_round():
     try:
-        # lotto_numbers.txt에서 마지막 회차 읽기
-        with open(os.path.join(os.path.dirname(__file__), 'lotto_numbers.txt'), 'r') as f:
-            lines = f.readlines()
-            if not lines:
-                raise ValueError("로또 데이터 파일이 비어있습니다.")
-            last_round = int(lines[-1].split(',')[0])  # 마지막 줄의 회차 번호
-            
         # 현재 날짜로부터 이번 주 토요일 계산
         today = datetime.today()
         days_until_saturday = (5 - today.weekday()) % 7
         this_saturday = today + timedelta(days=days_until_saturday)
         
-        # 이번 주 토요일이 지났다면 다음 주 토요일의 회차
-        if today.weekday() == 5 and today.hour >= 21:  # 토요일 21시 이후
-            return last_round + 1
-        elif days_until_saturday == 0 and today.hour >= 21:  # 토요일 21시 이후
-            return last_round + 1
-        else:
-            return last_round
+        # 기준 날짜 (2025-05-03, 1170회)
+        base_date = datetime(2025, 5, 3)
+        base_round = 1170
+        
+        # 현재 날짜와 기준 날짜의 차이를 주 단위로 계산
+        weeks_diff = (this_saturday - base_date).days // 7
+        
+        # 현재 회차 계산
+        current_round = base_round + weeks_diff
+        
+        return current_round
             
     except Exception as e:
         raise Exception(f"회차 계산 중 오류 발생: {str(e)}")
